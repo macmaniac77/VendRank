@@ -1,0 +1,272 @@
+[
+  {
+    "slot_id": 1,
+    "center_x": 185,
+    "center_y": 121,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 129,
+    "top_left_y": 70
+  },
+  {
+    "slot_id": 2,
+    "center_x": 320,
+    "center_y": 119,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 264,
+    "top_left_y": 68
+  },
+  {
+    "slot_id": 3,
+    "center_x": 451,
+    "center_y": 121,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 395,
+    "top_left_y": 70
+  },
+  {
+    "slot_id": 4,
+    "center_x": 588,
+    "center_y": 120,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 532,
+    "top_left_y": 69
+  },
+  {
+    "slot_id": 5,
+    "center_x": 184,
+    "center_y": 247,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 128,
+    "top_left_y": 196
+  },
+  {
+    "slot_id": 6,
+    "center_x": 320,
+    "center_y": 249,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 264,
+    "top_left_y": 198
+  },
+  {
+    "slot_id": 7,
+    "center_x": 453,
+    "center_y": 248,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 397,
+    "top_left_y": 197
+  },
+  {
+    "slot_id": 8,
+    "center_x": 586,
+    "center_y": 250,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 530,
+    "top_left_y": 199
+  },
+  {
+    "slot_id": 9,
+    "center_x": 182,
+    "center_y": 383,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 126,
+    "top_left_y": 332
+  },
+  {
+    "slot_id": 10,
+    "center_x": 320,
+    "center_y": 384,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 264,
+    "top_left_y": 333
+  },
+  {
+    "slot_id": 11,
+    "center_x": 452,
+    "center_y": 385,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 396,
+    "top_left_y": 334
+  },
+  {
+    "slot_id": 12,
+    "center_x": 586,
+    "center_y": 385,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 530,
+    "top_left_y": 334
+  },
+  {
+    "slot_id": 13,
+    "center_x": 155,
+    "center_y": 531,
+    "width": 59,
+    "height": 53,
+    "top_left_x": 125.5,
+    "top_left_y": 504.5
+  },
+  {
+    "slot_id": 14,
+    "center_x": 228,
+    "center_y": 530,
+    "width": 59,
+    "height": 53,
+    "top_left_x": 198.5,
+    "top_left_y": 503.5
+  },
+  {
+    "slot_id": 15,
+    "center_x": 293,
+    "center_y": 529,
+    "width": 59,
+    "height": 53,
+    "top_left_x": 263.5,
+    "top_left_y": 502.5
+  },
+  {
+    "slot_id": 16,
+    "center_x": 357,
+    "center_y": 531,
+    "width": 59,
+    "height": 53,
+    "top_left_x": 327.5,
+    "top_left_y": 504.5
+  },
+  {
+    "slot_id": 17,
+    "center_x": 452,
+    "center_y": 500,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 396,
+    "top_left_y": 449
+  },
+  {
+    "slot_id": 18,
+    "center_x": 581,
+    "center_y": 506,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 525,
+    "top_left_y": 455
+  },
+  {
+    "slot_id": 19,
+    "center_x": 156,
+    "center_y": 616,
+    "width": 59,
+    "height": 53,
+    "top_left_x": 126.5,
+    "top_left_y": 589.5
+  },
+  {
+    "slot_id": 20,
+    "center_x": 226,
+    "center_y": 616,
+    "width": 59,
+    "height": 53,
+    "top_left_x": 196.5,
+    "top_left_y": 589.5
+  },
+  {
+    "slot_id": 21,
+    "center_x": 290,
+    "center_y": 618,
+    "width": 59,
+    "height": 53,
+    "top_left_x": 260.5,
+    "top_left_y": 591.5
+  },
+  {
+    "slot_id": 22,
+    "center_x": 354,
+    "center_y": 617,
+    "width": 59,
+    "height": 53,
+    "top_left_x": 324.5,
+    "top_left_y": 590.5
+  },
+  {
+    "slot_id": 23,
+    "center_x": 417,
+    "center_y": 620,
+    "width": 59,
+    "height": 53,
+    "top_left_x": 387.5,
+    "top_left_y": 593.5
+  },
+  {
+    "slot_id": 24,
+    "center_x": 484,
+    "center_y": 620,
+    "width": 59,
+    "height": 53,
+    "top_left_x": 454.5,
+    "top_left_y": 593.5
+  },
+  {
+    "slot_id": 25,
+    "center_x": 550,
+    "center_y": 621,
+    "width": 59,
+    "height": 53,
+    "top_left_x": 520.5,
+    "top_left_y": 594.5
+  },
+  {
+    "slot_id": 26,
+    "center_x": 613,
+    "center_y": 620,
+    "width": 59,
+    "height": 53,
+    "top_left_x": 583.5,
+    "top_left_y": 593.5
+  },
+  {
+    "slot_id": 27,
+    "center_x": 186,
+    "center_y": 727,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 130,
+    "top_left_y": 676
+  },
+  {
+    "slot_id": 28,
+    "center_x": 319,
+    "center_y": 725,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 263,
+    "top_left_y": 674
+  },
+  {
+    "slot_id": 29,
+    "center_x": 449,
+    "center_y": 725,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 393,
+    "top_left_y": 674
+  },
+  {
+    "slot_id": 30,
+    "center_x": 586,
+    "center_y": 730,
+    "width": 112,
+    "height": 102,
+    "top_left_x": 530,
+    "top_left_y": 679
+  }
+]

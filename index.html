@@ -13,6 +13,14 @@
 </head>
 <body class="dark:bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen p-4 font-sans">
   <h1 class="text-4xl font-bold mb-6 text-blue-300">Boathouse Vending: Pick Your Favorite Snack!</h1>
+
+  <!-- Canvas for Vending Machine Display -->
+  <div id="vendingMachineDisplay" class="mb-6 shadow-lg rounded-lg">
+    <canvas id="vendingMachineCanvas" width="985" height="985" style="border: 1px solid #4A5568;">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
+  </div>
+
   <div id="loading" class="text-lg text-gray-400 mb-4">Loading products...</div>
   <div id="voting-section" class="hidden flex flex-col items-center space-y-4 mb-6">
     <div class="flex space-x-4">
@@ -144,6 +152,135 @@
       document.getElementById('product-form').reset();
     });
     fetchItems();
+  </script>
+
+  <!-- Script for Vending Machine Canvas Overlay -->
+  <script>
+    window.addEventListener('load', function() {
+        // Vending machine product overlay logic
+        const slotConfig = [
+            // 12 Big Slots
+            { id: 1, centerX: 185, centerY: 121, width: 112, height: 102, imageSrc: 'images/1.png' },
+            { id: 2, centerX: 320, centerY: 119, width: 112, height: 102, imageSrc: 'images/2.png' },
+            { id: 3, centerX: 451, centerY: 121, width: 112, height: 102, imageSrc: 'images/3.png' },
+            { id: 4, centerX: 588, centerY: 120, width: 112, height: 102, imageSrc: 'images/4.png' },
+            { id: 5, centerX: 184, centerY: 247, width: 112, height: 102, imageSrc: 'images/5.png' },
+            { id: 6, centerX: 320, centerY: 249, width: 112, height: 102, imageSrc: 'images/6.png' },
+            { id: 7, centerX: 453, centerY: 248, width: 112, height: 102, imageSrc: 'images/7.png' },
+            { id: 8, centerX: 586, centerY: 250, width: 112, height: 102, imageSrc: 'images/8.png' },
+            { id: 9, centerX: 182, centerY: 383, width: 112, height: 102, imageSrc: 'images/9.png' },
+            { id: 10, centerX: 320, centerY: 384, width: 112, height: 102, imageSrc: 'images/10.png' },
+            { id: 11, centerX: 452, centerY: 385, width: 112, height: 102, imageSrc: 'images/11.png' },
+            { id: 12, centerX: 586, centerY: 385, width: 112, height: 102, imageSrc: 'images/12.png' },
+            // 4 Small Slots
+            { id: 13, centerX: 155, centerY: 531, width: 59, height: 53, imageSrc: 'images/13.png' },
+            { id: 14, centerX: 228, centerY: 530, width: 59, height: 53, imageSrc: 'images/14.png' },
+            { id: 15, centerX: 293, centerY: 529, width: 59, height: 53, imageSrc: 'images/15.png' },
+            { id: 16, centerX: 357, centerY: 531, width: 59, height: 53, imageSrc: 'images/16.png' },
+            // 2 Big Slots
+            { id: 17, centerX: 452, centerY: 500, width: 112, height: 102, imageSrc: 'images/17.png' },
+            { id: 18, centerX: 581, centerY: 506, width: 112, height: 102, imageSrc: 'images/18.png' },
+            // 8 Small Slots
+            { id: 19, centerX: 156, centerY: 616, width: 59, height: 53, imageSrc: 'images/19.png' },
+            { id: 20, centerX: 226, centerY: 616, width: 59, height: 53, imageSrc: 'images/20.png' },
+            { id: 21, centerX: 290, centerY: 618, width: 59, height: 53, imageSrc: 'images/21.png' },
+            { id: 22, centerX: 354, centerY: 617, width: 59, height: 53, imageSrc: 'images/22.png' },
+            { id: 23, centerX: 417, centerY: 620, width: 59, height: 53, imageSrc: 'images/23.png' },
+            { id: 24, centerX: 484, centerY: 620, width: 59, height: 53, imageSrc: 'images/24.png' },
+            { id: 25, centerX: 550, centerY: 621, width: 59, height: 53, imageSrc: 'images/25.png' },
+            { id: 26, centerX: 613, centerY: 620, width: 59, height: 53, imageSrc: 'images/26.png' },
+            // 4 Big Slots
+            { id: 27, centerX: 186, centerY: 727, width: 112, height: 102, imageSrc: 'images/27.png' },
+            { id: 28, centerX: 319, centerY: 725, width: 112, height: 102, imageSrc: 'images/28.png' },
+            { id: 29, centerX: 449, centerY: 725, width: 112, height: 102, imageSrc: 'images/29.png' },
+            { id: 30, centerX: 586, centerY: 730, width: 112, height: 102, imageSrc: 'images/30.png' }
+        ];
+
+        const canvas = document.getElementById('vendingMachineCanvas');
+        if (canvas && canvas.getContext) {
+            const ctx = canvas.getContext('2d');
+            const baseImageSrc = 'images/s65lfts.png';
+            let imagesToLoad = [baseImageSrc];
+            slotConfig.forEach(slot => imagesToLoad.push(slot.imageSrc));
+
+            const loadedImages = {};
+            let imagesLoadedCount = 0;
+
+            // Function to handle a successfully loaded image
+            function imageLoadedCallback(src, img) {
+                imagesLoadedCount++;
+                loadedImages[src] = img;
+                // Check if all images are loaded
+                if (imagesLoadedCount === imagesToLoad.length) {
+                    drawVendingMachine();
+                }
+            }
+
+            // Function to handle an error during image loading
+            function imageErrorCallback(src) {
+                console.error('Error loading image:', src);
+                imagesLoadedCount++; // Increment to ensure drawVendingMachine is eventually called
+                // Check if all images are processed (loaded or errored)
+                if (imagesLoadedCount === imagesToLoad.length) {
+                    drawVendingMachine();
+                }
+            }
+
+            // Preload all images
+            imagesToLoad.forEach(src => {
+                const img = new Image();
+                img.onload = () => imageLoadedCallback(src, img);
+                img.onerror = () => imageErrorCallback(src);
+                img.src = src;
+            });
+
+            // Main function to draw the vending machine and products
+            function drawVendingMachine() {
+                // Draw base image
+                const baseImage = loadedImages[baseImageSrc];
+                if (baseImage) {
+                    ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+                } else {
+                    console.error('Base vending machine image failed to load. Cannot draw.');
+                    // Optionally, draw a placeholder if the base image fails
+                    ctx.fillStyle = 'lightgrey';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = 'black';
+                    ctx.textAlign = 'center';
+                    ctx.font = '16px Arial';
+                    ctx.fillText('Error: Base image could not be loaded.', canvas.width / 2, canvas.height / 2);
+                    return; // Stop if base image isn't available
+                }
+
+                // Draw product images
+                slotConfig.forEach(slot => {
+                    const productImage = loadedImages[slot.imageSrc];
+                    if (productImage) {
+                        const drawX = slot.centerX - slot.width / 2;
+                        const drawY = slot.centerY - slot.height / 2;
+                        ctx.drawImage(productImage, drawX, drawY, slot.width, slot.height);
+                    } else {
+                        // This product image failed to load, skip drawing it
+                        console.warn('Product image not loaded, skipping slot:', slot.id, 'expected at', slot.imageSrc);
+                        // Optionally, draw a placeholder for missing product images
+                        // const drawX = slot.centerX - slot.width / 2;
+                        // const drawY = slot.centerY - slot.height / 2;
+                        // ctx.fillStyle = 'rgba(200, 200, 200, 0.5)';
+                        // ctx.fillRect(drawX, drawY, slot.width, slot.height);
+                        // ctx.fillStyle = 'black';
+                        // ctx.fillText('N/A', slot.centerX, slot.centerY);
+                    }
+                });
+                console.log('Vending machine drawing complete.');
+            }
+        } else {
+            console.error('HTML5 Canvas is not supported by your browser or the canvas element was not found.');
+            const displayDiv = document.getElementById('vendingMachineDisplay');
+            if (displayDiv) {
+                displayDiv.innerHTML = '<p style="color:red;">Error: Canvas not supported. Please use a modern browser.</p>';
+            }
+        }
+    });
   </script>
 </body>
 </html>
