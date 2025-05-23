@@ -14,13 +14,6 @@
 <body class="dark:bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen p-4 font-sans">
   <h1 class="text-4xl font-bold mb-6 text-blue-300">Boathouse Vending: Pick Your Favorite Snack!</h1>
 
-  <!-- Canvas for Vending Machine Display -->
-  <div id="vendingMachineDisplay" class="mb-6 shadow-lg rounded-lg">
-    <canvas id="vendingMachineCanvas" width="985" height="985" style="border: 1px solid #4A5568;">
-      Your browser does not support the HTML5 canvas tag.
-    </canvas>
-  </div>
-
   <div id="loading" class="text-lg text-gray-400 mb-4">Loading products...</div>
   <div id="voting-section" class="hidden flex flex-col items-center space-y-4 mb-6">
     <div class="flex space-x-4">
@@ -59,13 +52,21 @@
     <h2 class="text-xl font-semibold text-blue-300 mb-2">Add a New Product</h2>
     <form id="product-form">
       <input type="text" id="product-name" placeholder="Product Name" class="w-full p-2 mb-2 bg-gray-700 text-white rounded" required>
-      <input type="text" id="product-link" placeholder="Image Link (e.g., 3.jpg)" class="w-full p-2 mb-2 bg-gray-700 text-white rounded" required>
+      <input type="text" id="product-link" placeholder="Image Link (e.g., 3.png)" class="w-full p-2 mb-2 bg-gray-700 text-white rounded" required>
       <input type="number" id="product-price" placeholder="Price" step="0.01" class="w-full p-2 mb-2 bg-gray-700 text-white rounded" required>
       <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Submit</button>
     </form>
     <button id="close-form" class="mt-4 bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Close</button>
   </div>
   <div id="message" class="mt-4 text-lg text-gray-400"></div>
+
+  <!-- Canvas for Vending Machine Display -->
+  <div id="vendingMachineDisplay" class="mb-6 shadow-lg rounded-lg">
+    <canvas id="vendingMachineCanvas" width="985" height="985" style="border: 1px solid #4A5568;">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
+  </div>
+
   <script>
     let items = [];
     async function fetchItems() {
@@ -101,7 +102,7 @@
       const [a,b] = getRandomPair();
       ['1','2'].forEach((i, idx)=> {
         const item = idx===0? a : b;
-        document.getElementById('image-'+i).src = 'images/'+item.id+'.jpg';
+        document.getElementById('image-'+i).src = 'images/'+item.id+'.png';
         document.getElementById('name-'+i).textContent = item.name;
         document.getElementById('slot-'+i).textContent = 'Slot: '+(item.slot||'N/A');
         document.getElementById('price-'+i).textContent = 'Price: $'+item.price.toFixed(2);
@@ -273,6 +274,70 @@
                 });
                 console.log('Vending machine drawing complete.');
             }
+
+            // Add Click Event Listener to Canvas for ELO Ranking
+            canvas.addEventListener('click', function(event) {
+                // Get click coordinates relative to the canvas
+                const rect = canvas.getBoundingClientRect();
+                const clickX = event.clientX - rect.left;
+                const clickY = event.clientY - rect.top;
+
+                let clickedSlot = null;
+
+                // Identify clicked slot
+                for (const slot of slotConfig) {
+                    const minX = slot.centerX - slot.width / 2;
+                    const minY = slot.centerY - slot.height / 2;
+                    const maxX = slot.centerX + slot.width / 2;
+                    const maxY = slot.centerY + slot.height / 2;
+
+                    if (clickX >= minX && clickX <= maxX && clickY >= minY && clickY <= maxY) {
+                        clickedSlot = slot;
+                        break; 
+                    }
+                }
+
+                if (clickedSlot) {
+                    console.log('Clicked on slot:', clickedSlot.id, clickedSlot.imageSrc);
+
+                    // Ensure the global 'items' array and 'updateItems' function from the ELO game script are accessible
+                    // Note: `items` array is from the first script block.
+                    if (typeof items !== 'undefined' && typeof updateItems === 'function') {
+                        const targetItem = items.find(item => item.id === clickedSlot.id);
+
+                        if (targetItem) {
+                            targetItem.elo += 5; // Increment ELO score by 5
+                            console.log('Updated ELO for item', targetItem.id, targetItem.name, 'New ELO:', targetItem.elo);
+                            
+                            // Call the ELO game's updateItems function to persist and refresh
+                            updateItems(); // This function is defined in the first script block
+
+                            // Optional: Immediate feedback if item is on display or leaderboard is active
+                            const product1NameEl = document.getElementById('name-1');
+                            const product2NameEl = document.getElementById('name-2');
+                            if (product1NameEl && product1NameEl.textContent === targetItem.name) {
+                                document.getElementById('elo-1').textContent = 'ELO: ' + targetItem.elo;
+                            }
+                            if (product2NameEl && product2NameEl.textContent === targetItem.name) {
+                                document.getElementById('elo-2').textContent = 'ELO: ' + targetItem.elo;
+                            }
+
+                            // If leaderboard is visible, refresh it
+                            // Note: `showLeaderboard` function is from the first script block.
+                            const leaderboardDiv = document.getElementById('leaderboard');
+                            if (leaderboardDiv && !leaderboardDiv.classList.contains('hidden') && typeof showLeaderboard === 'function') {
+                                showLeaderboard();
+                            }
+
+                        } else {
+                            console.error('Could not find item with ID:', clickedSlot.id, 'in ELO items array. Ensure items are loaded and IDs match.');
+                        }
+                    } else {
+                        console.error('ELO game "items" array or "updateItems" function is not accessible from canvas script.');
+                    }
+                }
+            });
+
         } else {
             console.error('HTML5 Canvas is not supported by your browser or the canvas element was not found.');
             const displayDiv = document.getElementById('vendingMachineDisplay');

@@ -7,8 +7,8 @@ This feature dynamically overlays product images onto a base vending machine ima
 
 *   **`index.html`**:
     *   This is the main file to open in your browser.
-    *   It contains an HTML5 `<canvas id="vendingMachineCanvas">` element with dimensions 985x985 pixels, which serves as the drawing surface.
-    *   All the JavaScript logic required for the overlay is embedded within this file.
+    *   It contains an HTML5 `<canvas id="vendingMachineCanvas">` element with dimensions 985x985 pixels, which serves as the drawing surface. This canvas is positioned at the bottom of the page content, after the main ELO game interface elements.
+    *   All the JavaScript logic required for the overlay and interactivity is embedded within this file.
 
 *   **JavaScript Logic** (embedded within `index.html`):
     *   **`slotConfig` Array**: A JavaScript array named `slotConfig` is defined directly in the script. This array holds the configuration for each of the 30 product slots. Each object in the array specifies:
@@ -21,6 +21,10 @@ This feature dynamically overlays product images onto a base vending machine ima
         1.  Once all images are preloaded, the base vending machine image (`images/s65lfts.png`) is drawn onto the canvas first, covering its full dimensions.
         2.  Then, the script iterates through the `slotConfig` array. For each slot, it draws the corresponding product image.
         3.  The product images are drawn at coordinates calculated from their `centerX`, `centerY`, `width`, and `height`, effectively resizing them to fit their designated slot and positioning them correctly.
+    *   **Interactive Features**:
+        *   **Click-to-Rank**: Users can click directly on product images displayed on the vending machine canvas.
+        *   When a product on the canvas is clicked, its ELO score in the ELO game is incremented by 5 points.
+        *   This ELO score update is then persisted using the ELO game's existing `updateItems()` function, which also handles refreshing the ELO game display.
 
 ## Image Files
 
