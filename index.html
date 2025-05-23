@@ -60,6 +60,292 @@
   </div>
   <div id="message" class="mt-4 text-lg text-gray-400"></div>
 
+  <script>
+    const visualSlotToItemSlotMap = {
+      1: "A1", 2: "A3", 3: "A5", 4: "A7",
+      5: "B1", 6: "B3", 7: "B5", 8: "B7",
+      9: "C1", 10: "C3", 11: "C5", 12: "C7",
+      13: "D1", 14: "D2", 15: "D3", 16: "D4", 17: "D5", 18: "D7",
+      19: "E1", 20: "E2", 21: "E3", 22: "E4", 23: "E5", 24: "E6", 25: "E7", 26: "E8",
+      27: "F1", 28: "F3", 29: "F5", 30: "F7"
+    };
+  </script>
+
+  <script>
+    const baseSlotLayoutData = [
+      {
+        "slot_id": 1,
+        "center_x": 185,
+        "center_y": 121,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 129,
+        "top_left_y": 70
+      },
+      {
+        "slot_id": 2,
+        "center_x": 320,
+        "center_y": 119,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 264,
+        "top_left_y": 68
+      },
+      {
+        "slot_id": 3,
+        "center_x": 451,
+        "center_y": 121,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 395,
+        "top_left_y": 70
+      },
+      {
+        "slot_id": 4,
+        "center_x": 588,
+        "center_y": 120,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 532,
+        "top_left_y": 69
+      },
+      {
+        "slot_id": 5,
+        "center_x": 184,
+        "center_y": 247,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 128,
+        "top_left_y": 196
+      },
+      {
+        "slot_id": 6,
+        "center_x": 320,
+        "center_y": 249,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 264,
+        "top_left_y": 198
+      },
+      {
+        "slot_id": 7,
+        "center_x": 453,
+        "center_y": 248,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 397,
+        "top_left_y": 197
+      },
+      {
+        "slot_id": 8,
+        "center_x": 586,
+        "center_y": 250,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 530,
+        "top_left_y": 199
+      },
+      {
+        "slot_id": 9,
+        "center_x": 182,
+        "center_y": 383,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 126,
+        "top_left_y": 332
+      },
+      {
+        "slot_id": 10,
+        "center_x": 320,
+        "center_y": 384,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 264,
+        "top_left_y": 333
+      },
+      {
+        "slot_id": 11,
+        "center_x": 452,
+        "center_y": 385,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 396,
+        "top_left_y": 334
+      },
+      {
+        "slot_id": 12,
+        "center_x": 586,
+        "center_y": 385,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 530,
+        "top_left_y": 334
+      },
+      {
+        "slot_id": 13,
+        "center_x": 155,
+        "center_y": 531,
+        "width": 59,
+        "height": 53,
+        "top_left_x": 125.5,
+        "top_left_y": 504.5
+      },
+      {
+        "slot_id": 14,
+        "center_x": 228,
+        "center_y": 530,
+        "width": 59,
+        "height": 53,
+        "top_left_x": 198.5,
+        "top_left_y": 503.5
+      },
+      {
+        "slot_id": 15,
+        "center_x": 293,
+        "center_y": 529,
+        "width": 59,
+        "height": 53,
+        "top_left_x": 263.5,
+        "top_left_y": 502.5
+      },
+      {
+        "slot_id": 16,
+        "center_x": 357,
+        "center_y": 531,
+        "width": 59,
+        "height": 53,
+        "top_left_x": 327.5,
+        "top_left_y": 504.5
+      },
+      {
+        "slot_id": 17,
+        "center_x": 452,
+        "center_y": 500,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 396,
+        "top_left_y": 449
+      },
+      {
+        "slot_id": 18,
+        "center_x": 581,
+        "center_y": 506,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 525,
+        "top_left_y": 455
+      },
+      {
+        "slot_id": 19,
+        "center_x": 156,
+        "center_y": 616,
+        "width": 59,
+        "height": 53,
+        "top_left_x": 126.5,
+        "top_left_y": 589.5
+      },
+      {
+        "slot_id": 20,
+        "center_x": 226,
+        "center_y": 616,
+        "width": 59,
+        "height": 53,
+        "top_left_x": 196.5,
+        "top_left_y": 589.5
+      },
+      {
+        "slot_id": 21,
+        "center_x": 290,
+        "center_y": 618,
+        "width": 59,
+        "height": 53,
+        "top_left_x": 260.5,
+        "top_left_y": 591.5
+      },
+      {
+        "slot_id": 22,
+        "center_x": 354,
+        "center_y": 617,
+        "width": 59,
+        "height": 53,
+        "top_left_x": 324.5,
+        "top_left_y": 590.5
+      },
+      {
+        "slot_id": 23,
+        "center_x": 417,
+        "center_y": 620,
+        "width": 59,
+        "height": 53,
+        "top_left_x": 387.5,
+        "top_left_y": 593.5
+      },
+      {
+        "slot_id": 24,
+        "center_x": 484,
+        "center_y": 620,
+        "width": 59,
+        "height": 53,
+        "top_left_x": 454.5,
+        "top_left_y": 593.5
+      },
+      {
+        "slot_id": 25,
+        "center_x": 550,
+        "center_y": 621,
+        "width": 59,
+        "height": 53,
+        "top_left_x": 520.5,
+        "top_left_y": 594.5
+      },
+      {
+        "slot_id": 26,
+        "center_x": 613,
+        "center_y": 620,
+        "width": 59,
+        "height": 53,
+        "top_left_x": 583.5,
+        "top_left_y": 593.5
+      },
+      {
+        "slot_id": 27,
+        "center_x": 186,
+        "center_y": 727,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 130,
+        "top_left_y": 676
+      },
+      {
+        "slot_id": 28,
+        "center_x": 319,
+        "center_y": 725,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 263,
+        "top_left_y": 674
+      },
+      {
+        "slot_id": 29,
+        "center_x": 449,
+        "center_y": 725,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 393,
+        "top_left_y": 674
+      },
+      {
+        "slot_id": 30,
+        "center_x": 586,
+        "center_y": 730,
+        "width": 112,
+        "height": 102,
+        "top_left_x": 530,
+        "top_left_y": 679
+      }
+    ];
+  </script>
+
   <!-- Canvas for Vending Machine Display -->
   <div id="vendingMachineDisplay" class="mb-6 shadow-lg rounded-lg">
     <canvas id="vendingMachineCanvas" width="985" height="985" style="border: 1px solid #4A5568;">
@@ -69,13 +355,59 @@
 
   <script>
     let items = [];
+    let dynamicSlotConfig = [];
+
+    function generateDynamicSlotConfig(fetchedItems, layoutData, map) {
+      const dynamicSlots = [];
+      for (let i = 0; i < layoutData.length; i++) {
+        const slotLayout = layoutData[i];
+        const currentVisualSlotId = slotLayout.slot_id; // slot_id from baseSlotLayoutData
+        const targetItemSlotCode = map[currentVisualSlotId];
+        const itemInJson = fetchedItems.find(item => item.slot === targetItemSlotCode);
+
+        if (itemInJson && targetItemSlotCode !== "D2") { // Assuming "D2" is an example of a designated empty slot
+          dynamicSlots.push({
+            id: itemInJson.id,
+            name: itemInJson.name,
+            centerX: slotLayout.center_x,
+            centerY: slotLayout.center_y,
+            width: slotLayout.width,
+            height: slotLayout.height,
+            imageSrc: 'images/' + itemInJson.id + '.png',
+            visualSlotId: currentVisualSlotId,
+            itemSlotCode: targetItemSlotCode
+          });
+        } else {
+          dynamicSlots.push({
+            isEmpty: true,
+            centerX: slotLayout.center_x,
+            centerY: slotLayout.center_y,
+            width: slotLayout.width,
+            height: slotLayout.height,
+            visualSlotId: currentVisualSlotId,
+            itemSlotCode: targetItemSlotCode // Store even if empty, for consistency or debugging
+          });
+        }
+      }
+      return dynamicSlots;
+    }
+
     async function fetchItems() {
       try {
         const res = await fetch('/api/jsonbin', { method: 'GET' });
         if (!res.ok) throw new Error('Fetch failed');
         const data = await res.json();
         items = data.items;
-        displayPair();
+        dynamicSlotConfig = generateDynamicSlotConfig(items, baseSlotLayoutData, visualSlotToItemSlotMap);
+        
+        // NEW: Call a function to initialize canvas after config is ready
+        if (typeof initializeVendingMachineCanvas === 'function') {
+            initializeVendingMachineCanvas(dynamicSlotConfig); 
+        } else {
+            console.error("initializeVendingMachineCanvas function not found");
+        }
+
+        displayPair(); // This updates the ELO voting UI
       } catch (e) {
         document.getElementById('message').textContent = 'Error loading products';
         document.getElementById('message').classList.add('text-red-500');
@@ -89,6 +421,11 @@
           body: JSON.stringify({items})
         });
         if (!res.ok) throw new Error('Update failed');
+        // Assuming 'items' might have been updated in the backend and is implicitly re-synced
+        // or the local 'items' array is the source of truth for the PUT and is already up-to-date.
+        // If the PUT request returns the updated list of items, you'd update 'items' here first.
+        // For now, we'll assume 'items' is current.
+        dynamicSlotConfig = generateDynamicSlotConfig(items, baseSlotLayoutData, visualSlotToItemSlotMap);
         document.getElementById('message').textContent = 'Scores updated!';
         setTimeout(()=>{document.getElementById('message').textContent=''; displayPair();},1000);
       } catch (e) {
@@ -144,10 +481,11 @@
       const name=document.getElementById('product-name').value;
       const link=document.getElementById('product-link').value;
       const price=parseFloat(document.getElementById('product-price').value);
-      const id=Math.max(...items.map(x=>x.id))+1;
+      const id = items.length > 0 ? Math.max(...items.map(x => x.id)) + 1 : 1;
       const prod={id,name,elo:1500,slot:null,price,cost:price*0.5,sold:0};
       items.push(prod);
       await updateItems();
+      drawVendingMachine(window.dynamicSlotConfig); // Redraw canvas to show new item if it's mapped
       document.getElementById('message').textContent='Product added!';
       document.getElementById('add-product-form').classList.add('hidden');
       document.getElementById('product-form').reset();
@@ -157,135 +495,161 @@
 
   <!-- Script for Vending Machine Canvas Overlay -->
   <script>
-    window.addEventListener('load', function() {
-        // Vending machine product overlay logic
-        const slotConfig = [
-            // 12 Big Slots
-            { id: 1, centerX: 185, centerY: 121, width: 112, height: 102, imageSrc: 'images/1.png' },
-            { id: 2, centerX: 320, centerY: 119, width: 112, height: 102, imageSrc: 'images/2.png' },
-            { id: 3, centerX: 451, centerY: 121, width: 112, height: 102, imageSrc: 'images/3.png' },
-            { id: 4, centerX: 588, centerY: 120, width: 112, height: 102, imageSrc: 'images/4.png' },
-            { id: 5, centerX: 184, centerY: 247, width: 112, height: 102, imageSrc: 'images/5.png' },
-            { id: 6, centerX: 320, centerY: 249, width: 112, height: 102, imageSrc: 'images/6.png' },
-            { id: 7, centerX: 453, centerY: 248, width: 112, height: 102, imageSrc: 'images/7.png' },
-            { id: 8, centerX: 586, centerY: 250, width: 112, height: 102, imageSrc: 'images/8.png' },
-            { id: 9, centerX: 182, centerY: 383, width: 112, height: 102, imageSrc: 'images/9.png' },
-            { id: 10, centerX: 320, centerY: 384, width: 112, height: 102, imageSrc: 'images/10.png' },
-            { id: 11, centerX: 452, centerY: 385, width: 112, height: 102, imageSrc: 'images/11.png' },
-            { id: 12, centerX: 586, centerY: 385, width: 112, height: 102, imageSrc: 'images/12.png' },
-            // 4 Small Slots
-            { id: 13, centerX: 155, centerY: 531, width: 59, height: 53, imageSrc: 'images/13.png' },
-            { id: 14, centerX: 228, centerY: 530, width: 59, height: 53, imageSrc: 'images/14.png' },
-            { id: 15, centerX: 293, centerY: 529, width: 59, height: 53, imageSrc: 'images/15.png' },
-            { id: 16, centerX: 357, centerY: 531, width: 59, height: 53, imageSrc: 'images/16.png' },
-            // 2 Big Slots
-            { id: 17, centerX: 452, centerY: 500, width: 112, height: 102, imageSrc: 'images/17.png' },
-            { id: 18, centerX: 581, centerY: 506, width: 112, height: 102, imageSrc: 'images/18.png' },
-            // 8 Small Slots
-            { id: 19, centerX: 156, centerY: 616, width: 59, height: 53, imageSrc: 'images/19.png' },
-            { id: 20, centerX: 226, centerY: 616, width: 59, height: 53, imageSrc: 'images/20.png' },
-            { id: 21, centerX: 290, centerY: 618, width: 59, height: 53, imageSrc: 'images/21.png' },
-            { id: 22, centerX: 354, centerY: 617, width: 59, height: 53, imageSrc: 'images/22.png' },
-            { id: 23, centerX: 417, centerY: 620, width: 59, height: 53, imageSrc: 'images/23.png' },
-            { id: 24, centerX: 484, centerY: 620, width: 59, height: 53, imageSrc: 'images/24.png' },
-            { id: 25, centerX: 550, centerY: 621, width: 59, height: 53, imageSrc: 'images/25.png' },
-            { id: 26, centerX: 613, centerY: 620, width: 59, height: 53, imageSrc: 'images/26.png' },
-            // 4 Big Slots
-            { id: 27, centerX: 186, centerY: 727, width: 112, height: 102, imageSrc: 'images/27.png' },
-            { id: 28, centerX: 319, centerY: 725, width: 112, height: 102, imageSrc: 'images/28.png' },
-            { id: 29, centerX: 449, centerY: 725, width: 112, height: 102, imageSrc: 'images/29.png' },
-            { id: 30, centerX: 586, centerY: 730, width: 112, height: 102, imageSrc: 'images/30.png' }
-        ];
+    // Vending machine product overlay logic is now initialized by initializeVendingMachineCanvas
+    // which is called from the first script block after dynamicSlotConfig is ready.
 
+    let canvasGlobalRef; // To make canvas accessible for click listener removal/re-addition if needed
+    let ctxGlobalRef;    // To make context accessible for drawing outside initial load
+    let loadedImagesGlobal = {}; // Cache for loaded images
+
+    function drawVendingMachine(configToDraw) {
+        if (!ctxGlobalRef || !canvasGlobalRef) {
+            console.error("Canvas context not initialized for drawVendingMachine");
+            return;
+        }
+        const ctx = ctxGlobalRef;
+        const canvas = canvasGlobalRef;
+        const baseImageSrc = 'images/s65lfts.png'; // Define base image src here or pass as param
+
+        // Draw base image
+        const baseImage = loadedImagesGlobal[baseImageSrc];
+        if (baseImage) {
+            ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+        } else {
+            console.error('Base vending machine image failed to load. Cannot draw.');
+            ctx.fillStyle = 'lightgrey';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'black';
+            ctx.textAlign = 'center';
+            ctx.font = '16px Arial';
+            ctx.fillText('Error: Base image could not be loaded.', canvas.width / 2, canvas.height / 2);
+            // Do not return if base image fails, try to draw products anyway or show placeholders
+        }
+
+        // Draw product images from the dynamic configuration
+        configToDraw.forEach(slot => {
+            if (slot.isEmpty || !slot.imageSrc) {
+                // Optionally, draw a placeholder for empty or imageless slots
+                // console.log('Skipping empty or imageless slot:', slot.visualSlotId);
+                return; // Skip this slot
+            }
+
+            const productImage = loadedImagesGlobal[slot.imageSrc];
+            if (productImage) {
+                const drawX = slot.centerX - slot.width / 2;
+                const drawY = slot.centerY - slot.height / 2;
+                ctx.drawImage(productImage, drawX, drawY, slot.width, slot.height);
+            } else {
+                // This product image failed to load, or not yet loaded
+                console.warn('Product image not loaded for slot:', slot.visualSlotId, 'expected at', slot.imageSrc);
+                // Optionally, draw a placeholder for missing product images
+                // const drawX = slot.centerX - slot.width / 2;
+                // const drawY = slot.centerY - slot.height / 2;
+                // ctx.fillStyle = 'rgba(200, 200, 200, 0.5)';
+                // ctx.fillRect(drawX, drawY, slot.width, slot.height);
+                // ctx.fillStyle = 'black';
+                // ctx.fillText('N/A', slot.centerX, slot.centerY);
+            }
+        });
+        console.log('Vending machine drawing complete with dynamic config.');
+    }
+
+
+    function initializeVendingMachineCanvas(currentDynamicSlotConfig) {
         const canvas = document.getElementById('vendingMachineCanvas');
-        if (canvas && canvas.getContext) {
-            const ctx = canvas.getContext('2d');
-            const baseImageSrc = 'images/s65lfts.png';
-            let imagesToLoad = [baseImageSrc];
-            slotConfig.forEach(slot => imagesToLoad.push(slot.imageSrc));
+        if (!canvas || !canvas.getContext) {
+            console.error('HTML5 Canvas is not supported by your browser or the canvas element was not found.');
+            const displayDiv = document.getElementById('vendingMachineDisplay');
+            if (displayDiv) {
+                displayDiv.innerHTML = '<p style="color:red;">Error: Canvas not supported. Please use a modern browser.</p>';
+            }
+            return;
+        }
+        canvasGlobalRef = canvas; // Store canvas reference
+        ctxGlobalRef = canvas.getContext('2d'); // Store context reference
+        
+        const baseImageSrc = 'images/s65lfts.png';
+        let imagesToLoad = [baseImageSrc];
 
-            const loadedImages = {};
-            let imagesLoadedCount = 0;
+        currentDynamicSlotConfig.forEach(slot => {
+            if (!slot.isEmpty && slot.imageSrc) {
+                imagesToLoad.push(slot.imageSrc);
+            }
+        });
+        
+        // Filter out duplicate image URLs to prevent redundant loading
+        imagesToLoad = [...new Set(imagesToLoad)];
 
-            // Function to handle a successfully loaded image
-            function imageLoadedCallback(src, img) {
+        let imagesLoadedCount = 0;
+        const totalImagesToLoad = imagesToLoad.length;
+
+        // Clear previously loaded images if re-initializing, except for the base image if desired
+        // For simplicity, we are clearing all and reloading.
+        // loadedImagesGlobal = { [baseImageSrc]: loadedImagesGlobal[baseImageSrc] }; // Option to preserve base image
+        loadedImagesGlobal = {};
+
+
+        function imageLoadedCallback(src, img) {
+            imagesLoadedCount++;
+            loadedImagesGlobal[src] = img;
+            if (imagesLoadedCount === totalImagesToLoad) {
+                console.log("All images loaded, drawing vending machine.");
+                drawVendingMachine(currentDynamicSlotConfig); // Pass the config used for loading
+            }
+        }
+
+        function imageErrorCallback(src) {
+            console.error('Error loading image:', src);
+            imagesLoadedCount++; 
+            if (imagesLoadedCount === totalImagesToLoad) {
+                console.log("Finished processing all images (some may have failed), drawing vending machine.");
+                drawVendingMachine(currentDynamicSlotConfig); // Still attempt to draw
+            }
+        }
+
+        if (totalImagesToLoad === 0) { // No images to load (e.g. no base image, no product images)
+             console.warn("No images to load for vending machine canvas.");
+             drawVendingMachine(currentDynamicSlotConfig); // Attempt to draw anyway (e.g. empty canvas or base image if logic changes)
+             return;
+        }
+        
+        imagesToLoad.forEach(src => {
+            // Skip if image already loaded (e.g. base image from previous load)
+            // This check is more relevant if loadedImagesGlobal is not fully cleared
+            if (loadedImagesGlobal[src]) {
                 imagesLoadedCount++;
-                loadedImages[src] = img;
-                // Check if all images are loaded
-                if (imagesLoadedCount === imagesToLoad.length) {
-                    drawVendingMachine();
+                if (imagesLoadedCount === totalImagesToLoad) {
+                     drawVendingMachine(currentDynamicSlotConfig);
                 }
+                return;
             }
 
-            // Function to handle an error during image loading
-            function imageErrorCallback(src) {
-                console.error('Error loading image:', src);
-                imagesLoadedCount++; // Increment to ensure drawVendingMachine is eventually called
-                // Check if all images are processed (loaded or errored)
-                if (imagesLoadedCount === imagesToLoad.length) {
-                    drawVendingMachine();
-                }
-            }
+            const img = new Image();
+            img.onload = () => imageLoadedCallback(src, img);
+            img.onerror = () => imageErrorCallback(src);
+            img.src = src;
+        });
 
-            // Preload all images
-            imagesToLoad.forEach(src => {
-                const img = new Image();
-                img.onload = () => imageLoadedCallback(src, img);
-                img.onerror = () => imageErrorCallback(src);
-                img.src = src;
-            });
-
-            // Main function to draw the vending machine and products
-            function drawVendingMachine() {
-                // Draw base image
-                const baseImage = loadedImages[baseImageSrc];
-                if (baseImage) {
-                    ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
-                } else {
-                    console.error('Base vending machine image failed to load. Cannot draw.');
-                    // Optionally, draw a placeholder if the base image fails
-                    ctx.fillStyle = 'lightgrey';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.fillStyle = 'black';
-                    ctx.textAlign = 'center';
-                    ctx.font = '16px Arial';
-                    ctx.fillText('Error: Base image could not be loaded.', canvas.width / 2, canvas.height / 2);
-                    return; // Stop if base image isn't available
-                }
-
-                // Draw product images
-                slotConfig.forEach(slot => {
-                    const productImage = loadedImages[slot.imageSrc];
-                    if (productImage) {
-                        const drawX = slot.centerX - slot.width / 2;
-                        const drawY = slot.centerY - slot.height / 2;
-                        ctx.drawImage(productImage, drawX, drawY, slot.width, slot.height);
-                    } else {
-                        // This product image failed to load, skip drawing it
-                        console.warn('Product image not loaded, skipping slot:', slot.id, 'expected at', slot.imageSrc);
-                        // Optionally, draw a placeholder for missing product images
-                        // const drawX = slot.centerX - slot.width / 2;
-                        // const drawY = slot.centerY - slot.height / 2;
-                        // ctx.fillStyle = 'rgba(200, 200, 200, 0.5)';
-                        // ctx.fillRect(drawX, drawY, slot.width, slot.height);
-                        // ctx.fillStyle = 'black';
-                        // ctx.fillText('N/A', slot.centerX, slot.centerY);
-                    }
-                });
-                console.log('Vending machine drawing complete.');
-            }
-
-            // Add Click Event Listener to Canvas for ELO Ranking
+        // Setup click listener - ensure it's added only once or managed if this function can be called multiple times
+        // For now, assuming it's fine to re-add if items are reloaded, but a more robust approach
+        // might involve removing an old listener before adding a new one.
+        // However, the event listener uses global dynamicSlotConfig, so re-adding isn't strictly necessary
+        // unless the canvas element itself is recreated.
+        
+        // Check if listener already exists to avoid multiple additions (simple check)
+        if (!canvas.dataset.clickListenerAdded) {
             canvas.addEventListener('click', function(event) {
-                // Get click coordinates relative to the canvas
                 const rect = canvas.getBoundingClientRect();
                 const clickX = event.clientX - rect.left;
                 const clickY = event.clientY - rect.top;
-
                 let clickedSlot = null;
 
-                // Identify clicked slot
-                for (const slot of slotConfig) {
+                // Use the GLOBAL dynamicSlotConfig for hit detection
+                // This is important because dynamicSlotConfig can be updated by fetchItems/updateItems
+                // after this listener is initially set up.
+                for (const slot of window.dynamicSlotConfig || []) { // Use window.dynamicSlotConfig to ensure global scope
+                    if (slot.isEmpty) continue; // Cannot click empty slots
+
                     const minX = slot.centerX - slot.width / 2;
                     const minY = slot.centerY - slot.height / 2;
                     const maxX = slot.centerX + slot.width / 2;
@@ -293,59 +657,65 @@
 
                     if (clickX >= minX && clickX <= maxX && clickY >= minY && clickY <= maxY) {
                         clickedSlot = slot;
-                        break; 
+                        break;
                     }
                 }
 
                 if (clickedSlot) {
-                    console.log('Clicked on slot:', clickedSlot.id, clickedSlot.imageSrc);
-
-                    // Ensure the global 'items' array and 'updateItems' function from the ELO game script are accessible
-                    // Note: `items` array is from the first script block.
-                    if (typeof items !== 'undefined' && typeof updateItems === 'function') {
-                        const targetItem = items.find(item => item.id === clickedSlot.id);
+                    console.log('Clicked on slot (dynamic):', clickedSlot.id, clickedSlot.name, clickedSlot.imageSrc);
+                    
+                    // Access global `items` and `updateItems` from the first script block
+                    if (typeof window.items !== 'undefined' && typeof window.updateItems === 'function') {
+                        const targetItem = window.items.find(item => item.id === clickedSlot.id);
 
                         if (targetItem) {
-                            targetItem.elo += 5; // Increment ELO score by 5
+                            targetItem.elo += 5; // Increment ELO score
                             console.log('Updated ELO for item', targetItem.id, targetItem.name, 'New ELO:', targetItem.elo);
                             
-                            // Call the ELO game's updateItems function to persist and refresh
-                            updateItems(); // This function is defined in the first script block
+                            window.updateItems().then(() => {
+                                // After items are updated (and dynamicSlotConfig is presumably rebuilt), redraw the canvas.
+                                // Note: updateItems already calls generateDynamicSlotConfig.
+                                // We need to ensure the canvas redraws with the *new* dynamicSlotConfig.
+                                // The `initializeVendingMachineCanvas` would need to be called again if images change,
+                                // or just `drawVendingMachine` if only ELO/text details change but images are the same.
+                                // For simplicity, if updateItems causes a full refresh of items that might change images,
+                                // then initializeVendingMachineCanvas should be called again.
+                                // However, the original plan was to call initializeVendingMachineCanvas only from fetchItems.
+                                // Let's assume for now that updateItems() will refresh the ELO part of the UI,
+                                // and if the canvas needs a full redraw with potentially new images,
+                                // that would be handled by a subsequent fetchItems or a more direct call to redraw.
+                                // The prompt focuses on the click handler using the global dynamicSlotConfig.
+                                // A simple redraw after ELO update:
+                                if (typeof window.dynamicSlotConfig !== 'undefined') {
+                                   drawVendingMachine(window.dynamicSlotConfig);
+                                }
 
-                            // Optional: Immediate feedback if item is on display or leaderboard is active
-                            const product1NameEl = document.getElementById('name-1');
-                            const product2NameEl = document.getElementById('name-2');
-                            if (product1NameEl && product1NameEl.textContent === targetItem.name) {
-                                document.getElementById('elo-1').textContent = 'ELO: ' + targetItem.elo;
-                            }
-                            if (product2NameEl && product2NameEl.textContent === targetItem.name) {
-                                document.getElementById('elo-2').textContent = 'ELO: ' + targetItem.elo;
-                            }
-
-                            // If leaderboard is visible, refresh it
-                            // Note: `showLeaderboard` function is from the first script block.
-                            const leaderboardDiv = document.getElementById('leaderboard');
-                            if (leaderboardDiv && !leaderboardDiv.classList.contains('hidden') && typeof showLeaderboard === 'function') {
-                                showLeaderboard();
-                            }
+                                // Optional: Immediate feedback if item is on display or leaderboard is active
+                                const product1NameEl = document.getElementById('name-1');
+                                const product2NameEl = document.getElementById('name-2');
+                                if (product1NameEl && product1NameEl.textContent === targetItem.name) {
+                                    document.getElementById('elo-1').textContent = 'ELO: ' + targetItem.elo;
+                                }
+                                if (product2NameEl && product2NameEl.textContent === targetItem.name) {
+                                    document.getElementById('elo-2').textContent = 'ELO: ' + targetItem.elo;
+                                }
+                                const leaderboardDiv = document.getElementById('leaderboard');
+                                if (leaderboardDiv && !leaderboardDiv.classList.contains('hidden') && typeof window.showLeaderboard === 'function') {
+                                    window.showLeaderboard();
+                                }
+                            });
 
                         } else {
-                            console.error('Could not find item with ID:', clickedSlot.id, 'in ELO items array. Ensure items are loaded and IDs match.');
+                            console.error('Could not find item with ID:', clickedSlot.id, 'in ELO items array.');
                         }
                     } else {
                         console.error('ELO game "items" array or "updateItems" function is not accessible from canvas script.');
                     }
                 }
             });
-
-        } else {
-            console.error('HTML5 Canvas is not supported by your browser or the canvas element was not found.');
-            const displayDiv = document.getElementById('vendingMachineDisplay');
-            if (displayDiv) {
-                displayDiv.innerHTML = '<p style="color:red;">Error: Canvas not supported. Please use a modern browser.</p>';
-            }
+            canvas.dataset.clickListenerAdded = 'true'; // Mark that listener has been added
         }
-    });
+    }
   </script>
 </body>
 </html>
