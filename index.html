@@ -13,6 +13,7 @@
 </head>
 <body class="dark:bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen p-4 font-sans">
   <h1 class="text-4xl font-bold mb-6 text-blue-300">Boathouse Vending: Pick Your Favorite Snack!</h1>
+
   <div id="loading" class="text-lg text-gray-400 mb-4">Loading products...</div>
   <div id="voting-section" class="hidden flex flex-col items-center space-y-4 mb-6">
     <div class="flex space-x-4">
@@ -51,13 +52,21 @@
     <h2 class="text-xl font-semibold text-blue-300 mb-2">Add a New Product</h2>
     <form id="product-form">
       <input type="text" id="product-name" placeholder="Product Name" class="w-full p-2 mb-2 bg-gray-700 text-white rounded" required>
-      <input type="text" id="product-link" placeholder="Image Link (e.g., 3.jpg)" class="w-full p-2 mb-2 bg-gray-700 text-white rounded" required>
+      <input type="text" id="product-link" placeholder="Image Link (e.g., 3.png)" class="w-full p-2 mb-2 bg-gray-700 text-white rounded" required>
       <input type="number" id="product-price" placeholder="Price" step="0.01" class="w-full p-2 mb-2 bg-gray-700 text-white rounded" required>
       <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Submit</button>
     </form>
     <button id="close-form" class="mt-4 bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Close</button>
   </div>
   <div id="message" class="mt-4 text-lg text-gray-400"></div>
+
+  <!-- Canvas for Vending Machine Display -->
+  <div id="vendingMachineDisplay" class="mb-6 shadow-lg rounded-lg">
+    <canvas id="vendingMachineCanvas" width="985" height="985" style="border: 1px solid #4A5568;">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
+  </div>
+
   <script>
     let items = [];
     async function fetchItems() {
@@ -67,6 +76,12 @@
         const data = await res.json();
         items = data.items;
         displayPair();
+        // Initialize the vending machine canvas with the fetched items
+        if (typeof initializeVendingMachineCanvas === 'function') {
+            initializeVendingMachineCanvas(items);
+        } else {
+            console.error("initializeVendingMachineCanvas function not found. Canvas will not be initialized with products.");
+        }
       } catch (e) {
         document.getElementById('message').textContent = 'Error loading products';
         document.getElementById('message').classList.add('text-red-500');
@@ -93,7 +108,7 @@
       const [a,b] = getRandomPair();
       ['1','2'].forEach((i, idx)=> {
         const item = idx===0? a : b;
-        document.getElementById('image-'+i).src = 'images/'+item.id+'.jpg';
+        document.getElementById('image-'+i).src = 'images/'+item.id+'.png';
         document.getElementById('name-'+i).textContent = item.name;
         document.getElementById('slot-'+i).textContent = 'Slot: '+(item.slot||'N/A');
         document.getElementById('price-'+i).textContent = 'Price: $'+item.price.toFixed(2);
@@ -144,6 +159,197 @@
       document.getElementById('product-form').reset();
     });
     fetchItems();
+  </script>
+
+  <!-- Script for Vending Machine Canvas Overlay -->
+  <script>
+    // Master definitions for all 30 visual slots in the vending machine
+    const masterSlotDefinitions = [
+        // Big Slots (Rows A, B, C) - visualId corresponds to old 'id' and image name (e.g., 1.png)
+        { visualId: 1, slotName: "A1", centerX: 185, centerY: 121, width: 112, height: 102 },
+        { visualId: 2, slotName: "A3", centerX: 320, centerY: 119, width: 112, height: 102 },
+        { visualId: 3, slotName: "A5", centerX: 451, centerY: 121, width: 112, height: 102 },
+        { visualId: 4, slotName: "A7", centerX: 588, centerY: 120, width: 112, height: 102 },
+        { visualId: 5, slotName: "B1", centerX: 184, centerY: 247, width: 112, height: 102 },
+        { visualId: 6, slotName: "B3", centerX: 320, centerY: 249, width: 112, height: 102 },
+        { visualId: 7, slotName: "B5", centerX: 453, centerY: 248, width: 112, height: 102 },
+        { visualId: 8, slotName: "B7", centerX: 586, centerY: 250, width: 112, height: 102 },
+        { visualId: 9, slotName: "C1", centerX: 182, centerY: 383, width: 112, height: 102 },
+        { visualId: 10, slotName: "C3", centerX: 320, centerY: 384, width: 112, height: 102 },
+        { visualId: 11, slotName: "C5", centerX: 452, centerY: 385, width: 112, height: 102 },
+        { visualId: 12, slotName: "C7", centerX: 586, centerY: 385, width: 112, height: 102 },
+        // Small Slots (Row D, first part)
+        { visualId: 13, slotName: "D1", centerX: 155, centerY: 531, width: 59, height: 53 },
+        { visualId: 14, slotName: "D2", centerX: 228, centerY: 530, width: 59, height: 53 }, // This visual slot will be empty
+        { visualId: 15, slotName: "D3", centerX: 293, centerY: 529, width: 59, height: 53 },
+        { visualId: 16, slotName: "D4", centerX: 357, centerY: 531, width: 59, height: 53 },
+        // Big Slots (Row D, continued)
+        { visualId: 17, slotName: "D5", centerX: 452, centerY: 500, width: 112, height: 102 },
+        { visualId: 18, slotName: "D7", centerX: 581, centerY: 506, width: 112, height: 102 },
+        // Small Slots (Row E)
+        { visualId: 19, slotName: "E1", centerX: 156, centerY: 616, width: 59, height: 53 },
+        { visualId: 20, slotName: "E2", centerX: 226, centerY: 616, width: 59, height: 53 },
+        { visualId: 21, slotName: "E3", centerX: 290, centerY: 618, width: 59, height: 53 },
+        { visualId: 22, slotName: "E4", centerX: 354, centerY: 617, width: 59, height: 53 },
+        { visualId: 23, slotName: "E5", centerX: 417, centerY: 620, width: 59, height: 53 },
+        { visualId: 24, slotName: "E6", centerX: 484, centerY: 620, width: 59, height: 53 },
+        { visualId: 25, slotName: "E7", centerX: 550, centerY: 621, width: 59, height: 53 },
+        { visualId: 26, slotName: "E8", centerX: 613, centerY: 620, width: 59, height: 53 },
+        // Big Slots (Row F)
+        { visualId: 27, slotName: "F1", centerX: 186, centerY: 727, width: 112, height: 102 },
+        { visualId: 28, slotName: "F3", centerX: 319, centerY: 725, width: 112, height: 102 },
+        { visualId: 29, slotName: "F5", centerX: 449, centerY: 725, width: 112, height: 102 },
+        { visualId: 30, slotName: "F7", centerX: 586, centerY: 730, width: 112, height: 102 }
+    ];
+
+    let canvasInstance = null; // Renamed to avoid conflict with global 'canvas' if any
+    let ctxInstance = null;    // Renamed for the same reason
+
+    window.addEventListener('load', function() {
+        canvasInstance = document.getElementById('vendingMachineCanvas');
+        if (canvasInstance && canvasInstance.getContext) {
+            ctxInstance = canvasInstance.getContext('2d');
+        } else {
+            console.error('HTML5 Canvas is not supported by your browser or the canvas element was not found.');
+            const displayDiv = document.getElementById('vendingMachineDisplay');
+            if (displayDiv) {
+                displayDiv.innerHTML = '<p style="color:red;">Error: Canvas not supported. Please use a modern browser.</p>';
+            }
+        }
+    });
+
+    function initializeVendingMachineCanvas(fetchedItems) {
+        if (!canvasInstance || !ctxInstance) {
+            console.error("Canvas not initialized. Cannot draw vending machine.");
+            return;
+        }
+
+        const baseImageSrc = 'images/s65lfts.png';
+        let imagesToLoad = [baseImageSrc];
+        
+        fetchedItems.forEach(item => {
+            if (item.id) { // Ensure item has an ID to construct image path
+                imagesToLoad.push(`images/${item.id}.png`);
+            }
+        });
+        // Remove duplicates in case multiple items share an image (though unlikely with item.id)
+        imagesToLoad = [...new Set(imagesToLoad)];
+
+        const loadedImages = {};
+        let imagesLoadedCount = 0;
+
+        function imageLoadedCallback(src, img) {
+            imagesLoadedCount++;
+            loadedImages[src] = img;
+            if (imagesLoadedCount === imagesToLoad.length) {
+                drawVendingMachine(fetchedItems, loadedImages, baseImageSrc);
+            }
+        }
+
+        function imageErrorCallback(src) {
+            console.error('Error loading image:', src);
+            imagesLoadedCount++;
+            if (imagesLoadedCount === imagesToLoad.length) {
+                drawVendingMachine(fetchedItems, loadedImages, baseImageSrc);
+            }
+        }
+
+        imagesToLoad.forEach(src => {
+            const img = new Image();
+            img.onload = () => imageLoadedCallback(src, img);
+            img.onerror = () => imageErrorCallback(src);
+            img.src = src;
+        });
+
+        // Main function to draw the vending machine and products
+        function drawVendingMachine(currentItems, currentLoadedImages, currentBaseImageSrc) {
+            ctxInstance.clearRect(0, 0, canvasInstance.width, canvasInstance.height); // Clear canvas first
+            const baseImage = currentLoadedImages[currentBaseImageSrc];
+            if (baseImage) {
+                ctxInstance.drawImage(baseImage, 0, 0, canvasInstance.width, canvasInstance.height);
+            } else {
+                console.error('Base vending machine image failed to load. Cannot draw.');
+                ctxInstance.fillStyle = 'lightgrey';
+                ctxInstance.fillRect(0, 0, canvasInstance.width, canvasInstance.height);
+                ctxInstance.fillStyle = 'black';
+                ctxInstance.textAlign = 'center';
+                ctxInstance.font = '16px Arial';
+                ctxInstance.fillText('Error: Base image could not be loaded.', canvasInstance.width / 2, canvasInstance.height / 2);
+                return;
+            }
+
+            masterSlotDefinitions.forEach(masterSlot => {
+                const productToDisplay = currentItems.find(item => item.slot === masterSlot.slotName);
+                if (productToDisplay) {
+                    const productImageSrc = `images/${productToDisplay.id}.png`;
+                    const productImage = currentLoadedImages[productImageSrc];
+                    if (productImage) {
+                        const drawX = masterSlot.centerX - masterSlot.width / 2;
+                        const drawY = masterSlot.centerY - masterSlot.height / 2;
+                        ctxInstance.drawImage(productImage, drawX, drawY, masterSlot.width, masterSlot.height);
+                    } else {
+                        console.warn('Product image not loaded for item ID:', productToDisplay.id, 'expected at', productImageSrc, 'for slot', masterSlot.slotName);
+                    }
+                }
+            });
+            console.log('Vending machine drawing complete with dynamic items.');
+        }
+
+        // Remove existing click listener before adding a new one to prevent duplicates if this function is called multiple times
+        // This is a simple way; a more robust way would be to use an AbortController if listeners were added frequently.
+        canvasInstance.removeEventListener('click', canvasClickHandler); // Named function needed for removal
+        canvasInstance.addEventListener('click', canvasClickHandler);
+        
+        function canvasClickHandler(event) {
+            const rect = canvasInstance.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const clickY = event.clientY - rect.top;
+            let clickedMasterSlot = null;
+
+            for (const slot of masterSlotDefinitions) {
+                const minX = slot.centerX - slot.width / 2;
+                const minY = slot.centerY - slot.height / 2;
+                const maxX = slot.centerX + slot.width / 2;
+                const maxY = slot.centerY + slot.height / 2;
+                if (clickX >= minX && clickX <= maxX && clickY >= minY && clickY <= maxY) {
+                    clickedMasterSlot = slot;
+                    break;
+                }
+            }
+
+            if (clickedMasterSlot) {
+                console.log('Clicked on master slot:', clickedMasterSlot.slotName, '(Visual ID:', clickedMasterSlot.visualId, ')');
+                const productInSlot = fetchedItems.find(item => item.slot === clickedMasterSlot.slotName);
+
+                if (productInSlot) {
+                    // Note: 'items' here refers to the global ELO game items array for modification.
+                    const targetItemInEloArray = items.find(eloItem => eloItem.id === productInSlot.id);
+                    if (targetItemInEloArray) {
+                        targetItemInEloArray.elo += 5;
+                        console.log('Updated ELO for item ID:', targetItemInEloArray.id, targetItemInEloArray.name, 'New ELO:', targetItemInEloArray.elo);
+                        updateItems(); // Call global ELO updateItems
+
+                        const product1NameEl = document.getElementById('name-1');
+                        const product2NameEl = document.getElementById('name-2');
+                        if (product1NameEl && product1NameEl.textContent === targetItemInEloArray.name) {
+                            document.getElementById('elo-1').textContent = 'ELO: ' + targetItemInEloArray.elo;
+                        }
+                        if (product2NameEl && product2NameEl.textContent === targetItemInEloArray.name) {
+                            document.getElementById('elo-2').textContent = 'ELO: ' + targetItemInEloArray.elo;
+                        }
+                        const leaderboardDiv = document.getElementById('leaderboard');
+                        if (leaderboardDiv && !leaderboardDiv.classList.contains('hidden') && typeof showLeaderboard === 'function') {
+                            showLeaderboard();
+                        }
+                    } else {
+                        console.error('Consistency error: Clicked product found by slotName, but not by ID in ELO items array.');
+                    }
+                } else {
+                    console.log('Clicked on an empty or unassigned slot:', clickedMasterSlot.slotName);
+                }
+            }
+        }
+    }
   </script>
 </body>
 </html>
