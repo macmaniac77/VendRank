@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boathouse Vending ELO Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: linear-gradient(to bottom, #1a202c, #2d3748); }
+    .product-card { transition: transform 0.2s; }
+    .product-card:hover { transform: scale(1.05); }
+  </style>
+</head>
+<body class="dark:bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen p-4 font-sans">
+  <h1 class="text-4xl font-bold mb-6 text-blue-300">Boathouse Vending: Pick Your Favorite Snack!</h1>
+  <div id="loading" class="text-lg text-gray-400 mb-4">Loading products...</div>
+  <div id="voting-section" class="hidden flex flex-col items-center space-y-4 mb-6">
+    <div class="flex space-x-4">
+      <div id="product-1" class="product-card bg-gray-800 p-4 rounded-lg shadow-lg w-48 text-center">
+        <img id="image-1" class="w-full h-32 object-cover rounded mb-2" alt="Product Image">
+        <p id="name-1" class="text-xl font-semibold text-blue-300"></p>
+        <p id="slot-1" class="text-sm text-gray-400"></p>
+        <p id="price-1" class="text-sm text-gray-400"></p>
+        <p id="sold-1" class="text-sm text-gray-400"></p>
+        <p id="elo-1" class="text-sm text-gray-300 font-medium"></p>
+        <button id="vote-1" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Vote</button>
+      </div>
+      <div class="flex items-center text-2xl font-bold text-gray-300">VS</div>
+      <div id="product-2" class="product-card bg-gray-800 p-4 rounded-lg shadow-lg w-48 text-center">
+        <img id="image-2" class="w-full h-32 object-cover rounded mb-2" alt="Product Image">
+        <p id="name-2" class="text-xl font-semibold text-blue-300"></p>
+        <p id="slot-2" class="text-sm text-gray-400"></p>
+        <p id="price-2" class="text-sm text-gray-400"></p>
+        <p id="sold-2" class="text-sm text-gray-400"></p>
+        <p id="elo-2" class="text-sm text-gray-300 font-medium"></p>
+        <button id="vote-2" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Vote</button>
+      </div>
+    </div>
+    <div class="flex space-x-4">
+      <button id="next-pair" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 hidden">Next Pair</button>
+      <button id="leaderboard-btn" class="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700">Show Leaderboard</button>
+      <button id="add-product-btn" class="bg-yellow-600 text-white px-6 py-2 rounded hover:bg-yellow-700">Add Product</button>
+    </div>
+  </div>
+  <div id="leaderboard" class="hidden bg-gray-800 p-4 rounded-lg shadow-lg w-full max-w-md mb-4">
+    <h2 class="text-xl font-semibold text-blue-300 mb-2">Leaderboard</h2>
+    <ul id="leaderboard-list" class="text-gray-300"></ul>
+    <button id="close-leaderboard" class="mt-4 bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Close</button>
+  </div>
+  <div id="add-product-form" class="hidden bg-gray-800 p-4 rounded-lg shadow-lg w-full max-w-md mb-4">
+    <h2 class="text-xl font-semibold text-blue-300 mb-2">Add a New Product</h2>
+    <form id="product-form">
+      <input type="text" id="product-name" placeholder="Product Name" class="w-full p-2 mb-2 bg-gray-700 text-white rounded" required>
+      <input type="text" id="product-link" placeholder="Image Link (e.g., 3.jpg)" class="w-full p-2 mb-2 bg-gray-700 text-white rounded" required>
+      <input type="number" id="product-price" placeholder="Price" step="0.01" class="w-full p-2 mb-2 bg-gray-700 text-white rounded" required>
+      <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Submit</button>
+    </form>
+    <button id="close-form" class="mt-4 bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Close</button>
+  </div>
+  <div id="message" class="mt-4 text-lg text-gray-400"></div>
+  <script>
+    let items = [];
+    async function fetchItems() {
+      try {
+        const res = await fetch('/api/jsonbin', { method: 'GET' });
+        if (!res.ok) throw new Error('Fetch failed');
+        const data = await res.json();
+        items = data.items;
+        displayPair();
+      } catch (e) {
+        document.getElementById('message').textContent = 'Error loading products';
+        document.getElementById('message').classList.add('text-red-500');
+      }
+    }
+    async function updateItems() {
+      try {
+        const res = await fetch('/api/jsonbin', {
+          method: 'PUT',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({items})
+        });
+        if (!res.ok) throw new Error('Update failed');
+        document.getElementById('message').textContent = 'Scores updated!';
+        setTimeout(()=>{document.getElementById('message').textContent=''; displayPair();},1000);
+      } catch (e) {
+        document.getElementById('message').textContent = 'Error updating scores';
+        document.getElementById('message').classList.add('text-red-500');
+      }
+    }
+    function displayPair() {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('voting-section').classList.remove('hidden');
+      const [a,b] = getRandomPair();
+      ['1','2'].forEach((i, idx)=> {
+        const item = idx===0? a : b;
+        document.getElementById('image-'+i).src = 'images/'+item.id+'.jpg';
+        document.getElementById('name-'+i).textContent = item.name;
+        document.getElementById('slot-'+i).textContent = 'Slot: '+(item.slot||'N/A');
+        document.getElementById('price-'+i).textContent = 'Price: $'+item.price.toFixed(2);
+        document.getElementById('sold-'+i).textContent = 'Sold: '+item.sold;
+        document.getElementById('elo-'+i).textContent = 'ELO: '+item.elo;
+        document.getElementById('vote-'+i).onclick = ()=>vote(a,b, idx===0?1:0);
+      });
+    }
+    function getRandomPair() {
+      let i=Math.floor(Math.random()*items.length);
+      let j=Math.floor(Math.random()*items.length);
+      while(j===i) j=Math.floor(Math.random()*items.length);
+      return [items[i], items[j]];
+    }
+    function vote(winner, loser, outcome) {
+      const K=32;
+      const expW=1/(1+10**((loser.elo-winner.elo)/400));
+      const expL=1/(1+10**((winner.elo-loser.elo)/400));
+      winner.elo = Math.round(winner.elo+K*(outcome-expW));
+      loser.elo = Math.round(loser.elo+K*((1-outcome)-expL));
+      updateItems();
+    }
+    function showLeaderboard() {
+      const lb=document.getElementById('leaderboard'), ul=document.getElementById('leaderboard-list');
+      lb.classList.remove('hidden'); ul.innerHTML='';
+      items.sort((a,b)=>b.elo-a.elo).forEach(item=>{
+        const li=document.createElement('li');
+        li.textContent = `${item.name}: ${item.elo} (Slot:${item.slot||'N/A'}, Sold:${item.sold})`;
+        ul.appendChild(li);
+      });
+    }
+    document.getElementById('next-pair').onclick=displayPair;
+    document.getElementById('leaderboard-btn').onclick=showLeaderboard;
+    document.getElementById('close-leaderboard').onclick=()=>document.getElementById('leaderboard').classList.add('hidden');
+    document.getElementById('add-product-btn').onclick=()=>document.getElementById('add-product-form').classList.remove('hidden');
+    document.getElementById('close-form').onclick=()=>document.getElementById('add-product-form').classList.add('hidden');
+    document.getElementById('product-form').addEventListener('submit', async e=>{
+      e.preventDefault();
+      const name=document.getElementById('product-name').value;
+      const link=document.getElementById('product-link').value;
+      const price=parseFloat(document.getElementById('product-price').value);
+      const id=Math.max(...items.map(x=>x.id))+1;
+      const prod={id,name,elo:1500,slot:null,price,cost:price*0.5,sold:0};
+      items.push(prod);
+      await updateItems();
+      document.getElementById('message').textContent='Product added!';
+      document.getElementById('add-product-form').classList.add('hidden');
+      document.getElementById('product-form').reset();
+    });
+    fetchItems();
+  </script>
+</body>
+</html>
