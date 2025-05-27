@@ -35,10 +35,12 @@ exports.handler = async function (event, context) {
           }
         });
       } else {
-        // If record is not an object or is null, return it as is or handle error
+        // If record is not a non-null object, log a warning and return an empty object stringified.
+        // This ensures the client always receives a parseable JSON that Object.values() can handle.
+        console.warn(`JSONbin record was not a non-null object. Type: ${typeof record}, Value: ${JSON.stringify(record)}. Returning empty object.`);
         return {
-          statusCode: 200,
-          body: JSON.stringify(record) 
+          statusCode: 200, // Still 200 as the function itself didn't fail, but data is empty/absent
+          body: JSON.stringify({}) 
         };
       }
 

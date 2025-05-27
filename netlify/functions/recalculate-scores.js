@@ -24,26 +24,19 @@ exports.handler = async function(event, context) {
     };
   }
 
-  let data; // Expecting an array of item objects
+  let data; 
   try {
     const response = await axios.get(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
       headers: { 'X-Master-Key': API_KEY }
     });
-    // IMPORTANT CHANGE: Assuming response.data.record is the array of items
-    // If the actual data is nested, e.g. response.data.record.items, this needs adjustment
-    // For now, directly use response.data.record as per subtask's "expected to be an array"
     data = response.data.record; 
 
-    if (!Array.isArray(data)) {
-      console.error('Fetched data.record is not an array:', data);
-      // If the root of the bin is the array, response.data itself might be the array.
-      // Let's check if response.data is an array if response.data.record is not.
-      if (Array.isArray(response.data)) {
-        data = response.data;
-      } else {
-        return { statusCode: 500, body: JSON.stringify({ message: 'Fetched data format error: Expected an array of items.' }) };
-      }
+    // Validate that data is a non-null object
+    if (typeof data !== 'object' || data === null) {
+      console.error(`Fetched data.record is not a non-null object. Type: ${typeof data}, Value: ${JSON.stringify(data)}. Aborting recalculate-scores.`);
+      return { statusCode: 500, body: JSON.stringify({ message: 'Fetched data format error: Expected a non-null object of items.' }) };
     }
+
   } catch (error) {
     console.error('Error fetching data from JSONbin:', error.message);
     return {
@@ -53,10 +46,11 @@ exports.handler = async function(event, context) {
   }
 
   const itemsForPvScaling = [];
+  const itemsArray = Object.values(data); // Use this for iteration and mapping
 
   // Calculate PV and prepare for scaling
-  data.forEach(item => {
-    // Ensure item is an object, skip if malformed entry in array
+  itemsArray.forEach(item => {
+    // Ensure item is an object, skip if malformed (though Object.values should only return values)
     if (typeof item !== 'object' || item === null) return; 
 
     const price = parseFloat(item.price) || 0;
@@ -65,18 +59,16 @@ exports.handler = async function(event, context) {
     
     const vendLog = Array.isArray(item.vendLog) ? item.vendLog : [];
     
-    const windowStart = new Date(); // Create new Date object for windowStart
+    const windowStart = new Date(); 
     windowStart.setDate(windowStart.getDate() - PROFIT_WINDOW_DAYS);
     
     const recentVends = vendLog.filter(v => {
       try {
-        // Ensure vend timestamp and price are valid before processing
-        if (v && v.ts) { // v.price is not used for filtering, only for potential future GM calculation per vend
+        if (v && v.ts) {
           return new Date(v.ts) >= windowStart;
         }
         return false;
       } catch (e) { 
-        // console.warn(`Invalid date string in vendLog for item ${item.name || 'Unknown'}: ${v.ts}`);
         return false; 
       }
     });
@@ -84,50 +76,45 @@ exports.handler = async function(event, context) {
     const vr = (PROFIT_WINDOW_DAYS > 0) ? recentVends.length / PROFIT_WINDOW_DAYS : 0;
     const pv = gm * vr;
     
-    item.profitVelocity = pv;
+    item.profitVelocity = pv; // This modifies the item within the 'data' object directly
 
     if (pv > 0) {
-      itemsForPvScaling.push(item);
+      itemsForPvScaling.push(item); // itemsForPvScaling will contain references to items in 'data'
     }
   });
 
   // Determine scaling parameters
-  const allElos = data.map(item => (typeof item === 'object' && item !== null ? item.elo : 0) || 0);
+  const allElos = itemsArray.map(item => (typeof item === 'object' && item !== null ? item.elo : 0) || 0);
   const minElo = allElos.length > 0 ? Math.min(...allElos) : 0;
   const maxElo = allElos.length > 0 ? Math.max(...allElos) : 0;
   
+  // itemsForPvScaling already contains the relevant items with profitVelocity > 0
   const activePvs = itemsForPvScaling.map(item => item.profitVelocity);
   const minPV = activePvs.length > 0 ? Math.min(...activePvs) : 0;
   const maxPV = activePvs.length > 0 ? Math.max(...activePvs) : 0;
 
   // Calculate composite scores
-  data.forEach(item => {
+  itemsArray.forEach(item => {
     if (typeof item !== 'object' || item === null) return;
 
-    // Use subtask's scaledR calculation
     let scaledR = (maxElo === minElo) ? 0 : (( (typeof item === 'object' && item !== null ? item.elo : 0) || 0) - minElo) / (maxElo - minElo);
-    scaledR = Math.max(0, Math.min(1, scaledR)); // Clamp to 0-1
+    scaledR = Math.max(0, Math.min(1, scaledR)); 
     
     let scaledV = 0;
-    if (item.profitVelocity > 0) { // Check item.profitVelocity, not pv which is out of scope
+    if (item.profitVelocity > 0) { 
       if (maxPV > minPV) {
         scaledV = (item.profitVelocity - minPV) / (maxPV - minPV);
       } else if (minPV === maxPV && item.profitVelocity === minPV) { 
-        // This covers:
-        // 1. Single item in itemsForPvScaling (minPV=maxPV=item.profitVelocity) -> scaledV = 1
-        // 2. Multiple items in itemsForPvScaling, all having the exact same profitVelocity -> scaledV = 1
-        // If minPV is 0 (because activePvs was empty or all PVs in it were 0, which shouldn't happen due to pv > 0 check for itemsForPvScaling)
-        // and item.profitVelocity is also 0, this path isn't taken due to item.profitVelocity > 0.
         scaledV = 1;
       }
     }
-    scaledV = Math.max(0, Math.min(1, scaledV)); // Clamp to 0-1
+    scaledV = Math.max(0, Math.min(1, scaledV)); 
     
-    item.composite = (SCORING_WEIGHT_R * scaledR) + (SCORING_WEIGHT_V * scaledV);
+    item.composite = (SCORING_WEIGHT_R * scaledR) + (SCORING_WEIGHT_V * scaledV); // Modifies item in 'data'
   });
   
   try {
-    // IMPORTANT CHANGE: Send the modified 'data' array directly
+    // Send the modified 'data' object (which contains items as properties)
     await axios.put(`https://api.jsonbin.io/v3/b/${BIN_ID}`, data, {
       headers: {
         'Content-Type': 'application/json',
