@@ -74,7 +74,7 @@
         const res = await fetch('/api/jsonbin', { method: 'GET' });
         if (!res.ok) throw new Error('Fetch failed');
         const data = await res.json();
-        items = data.items;
+        items = Array.isArray(data) ? data : Object.values(data);
         displayPair();
       } catch (e) {
         document.getElementById('message').textContent = 'Error loading products';
