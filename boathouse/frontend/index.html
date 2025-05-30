@@ -1,0 +1,129 @@
+<!-- Placeholder for where index.html content might be -->
+<!-- If creating new, use this basic structure -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boathouse Vending</title>
+    <!-- Assuming Tailwind CSS or similar is used based on class names -->
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Link to your CSS if any -->
+    <!-- <link rel="stylesheet" href="style.css"> -->
+</head>
+<body class="bg-gray-900 text-white p-6">
+
+    <h1 class="text-3xl font-bold text-center text-yellow-500 mb-6">Boathouse Vending Machine</h1>
+
+<iframe class="w-full max-w-xl mb-6 rounded-lg shadow-lg mx-auto"
+        src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0"
+        title="Boathouse Vending Teaser" frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+
+    <!-- ELO Board Placeholder (assuming it exists or will be added) -->
+    <section id="elo-board" class="bg-gray-800 p-4 rounded-lg shadow-lg w-full max-w-md mb-6 mx-auto">
+        <h2 class="text-xl font-semibold text-yellow-400 mb-2">ELO Rankings</h2>
+        <!-- ELO content would go here -->
+        <p class="text-center">ELO rankings will be displayed here.</p>
+    </section>
+
+    <!-- Final Slot Contest -->
+    <section id="final-slot" class="bg-gray-800 p-4 rounded-lg shadow-lg w-full max-w-md mb-6 mx-auto">
+      <h2 class="text-xl font-semibold text-yellow-400 mb-2">Vote for the Final Slot (G1-G4)</h2>
+      <div id="contest-options" class="grid grid-cols-2 gap-4"></div>
+      <button id="submit-final-vote"
+              class="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded w-full hidden">Submit Vote</button>
+    </section>
+
+    <section id="op-apply" class="bg-gray-800 p-4 rounded-lg shadow-lg w-full max-w-md mx-auto mt-6">
+      <h2 class="text-xl font-semibold text-blue-300 mb-2">Become the Local Operator</h2>
+      <form id="op-form" class="grid gap-2">
+        <input required name="name" placeholder="Full Name" class="p-2 bg-gray-700 rounded text-white">
+        <input required name="phone" placeholder="Phone" class="p-2 bg-gray-700 rounded text-white">
+        <input required type="email" name="email" placeholder="Email" class="p-2 bg-gray-700 rounded text-white">
+        <input required name="address" placeholder="Shipping Address" class="p-2 bg-gray-700 rounded text-white">
+        <textarea name="notes" placeholder="Tell us why you'd nail this role" class="p-2 bg-gray-700 rounded text-white"></textarea>
+        <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white p-2 rounded">Apply</button>
+      </form>
+      <p id="op-response" class="text-green-400 mt-2 hidden">Thanks—our team will text you!</p>
+    </section>
+
+    <!-- Scripts -->
+    <script>
+      // Placeholder for global items array. This should be populated by fetching from the API.
+      // let items = [];
+    </script>
+    <script src="js/api.js"></script>
+    <script src="js/elo.js"></script>
+    <script>
+      // Example of how items might be loaded and then UI rendered:
+      // This should be adapted to the actual structure of the application.
+      // It's crucial that 'window.items' is populated before 'renderFinalSlotOptions' is called.
+      document.addEventListener('DOMContentLoaded', () => {
+        if (typeof API !== 'undefined' && typeof API.items === 'function') {
+          API.items().then(loadedItems => {
+            window.items = loadedItems; // Make items globally available for elo.js
+            
+            // Call renderFinalSlotOptions if it's defined (should be from elo.js)
+            if (typeof renderFinalSlotOptions === 'function') {
+              renderFinalSlotOptions();
+            } else {
+              console.error('renderFinalSlotOptions function not found.');
+            }
+
+            // Call other rendering functions if they exist e.g. for ELO board
+            // if (typeof renderEloComparisons === 'function') {
+            //   renderEloComparisons();
+            // }
+          }).catch(error => {
+            console.error("Failed to load items:", error);
+            // Display error to user or handle appropriately
+            const contestSection = document.getElementById('final-slot');
+            if(contestSection) contestSection.innerHTML = "<p class='text-red-500'>Could not load items for the contest. Please try again later.</p>";
+          });
+        } else {
+          console.error('API.js not loaded or API.items not defined.');
+          const contestSection = document.getElementById('final-slot');
+          if(contestSection) contestSection.innerHTML = "<p class='text-red-500'>Error: API not available. Cannot load contest.</p>";
+        }
+      });
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const opForm = document.getElementById('op-form');
+        if (opForm) {
+          opForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target).entries());
+            
+            // Ensure API and API.apply are defined
+            if (typeof API === 'undefined' || typeof API.apply !== 'function') {
+                alert('API helper not found. Cannot submit application.');
+                return;
+            }
+
+            try {
+              const response = await API.apply(data);
+              // Check response, FastAPI usually returns the data or a success message
+              if (response.status === "received") { // As per backend/main.py
+                e.target.reset();
+                const opResponse = document.getElementById('op-response');
+                if (opResponse) {
+                  opResponse.classList.remove('hidden');
+                }
+              } else {
+                // Try to parse error if not the expected response
+                alert('Application submission failed: ' + (response.detail || 'Unknown error'));
+              }
+            } catch (error) {
+              console.error('Error submitting operator application:', error);
+              alert('An error occurred while submitting your application.');
+            }
+          });
+        } else {
+          console.warn('Operator application form with ID "op-form" not found.');
+        }
+      });
+    </script>
+</body>
+</html>
