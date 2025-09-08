@@ -1,0 +1,311 @@
+{
+  "items": [
+    {
+      "id": 22,
+      "name": "Reese\u2019s Peanut Butter Cups",
+      "price": 1.25,
+      "slot": null,
+      "elo": 1548,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 20,
+      "name": "100 Grand",
+      "price": 1.25,
+      "slot": null,
+      "elo": 1531,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 13,
+      "name": "Hostess Twinkies",
+      "price": 1.25,
+      "slot": null,
+      "elo": 1531,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 18,
+      "name": "Butterfinger",
+      "price": 1.25,
+      "slot": null,
+      "elo": 1545,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 21,
+      "name": "Baby Ruth",
+      "price": 1.25,
+      "slot": null,
+      "elo": 1531,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 26,
+      "name": "Red Bull (8.4 oz slim can)",
+      "price": 2.5,
+      "slot": null,
+      "elo": 1529,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 24,
+      "name": "Kit Kat",
+      "price": 1.25,
+      "slot": null,
+      "elo": 1529,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 7,
+      "name": "Ritz Bits (Cheese)",
+      "price": 1.25,
+      "slot": null,
+      "elo": 1501,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 28,
+      "name": "Sparkling ICE + Caffeine (red can)",
+      "price": 2.5,
+      "slot": null,
+      "elo": 1533,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 14,
+      "name": "Nutri-Grain Soft-Baked Bars \u2014 Strawberry (16-count)",
+      "price": 1.5,
+      "slot": null,
+      "elo": 1516,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 30,
+      "name": "Coke Original",
+      "price": 2.0,
+      "slot": null,
+      "elo": 1515,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 9,
+      "name": "Fritos (Original)",
+      "price": 1.5,
+      "slot": null,
+      "elo": 1502,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 1,
+      "name": "Doritos (Nacho Cheese)",
+      "price": 1.5,
+      "slot": null,
+      "elo": 1500,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 8,
+      "name": "Mini Nilla Wafers",
+      "price": 1.25,
+      "slot": null,
+      "elo": 1500,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 11,
+      "name": "Nutter Butter Bites",
+      "price": 1.25,
+      "slot": null,
+      "elo": 1500,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 17,
+      "name": "Hostess Chocolate CupCake",
+      "price": 1.25,
+      "slot": null,
+      "elo": 1500,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 29,
+      "name": "Sparkling ICE + Caffeine (red can)",
+      "price": 2.5,
+      "slot": null,
+      "elo": 1500,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 19,
+      "name": "Nestl\u00e9 Crunch",
+      "price": 1.25,
+      "slot": null,
+      "elo": 1499,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 12,
+      "name": "Oreo Mini Cookies",
+      "price": 1.25,
+      "slot": null,
+      "elo": 1485,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 15,
+      "name": "Nutri-Grain Soft-Baked Bars \u2014 Apple Cinnamon (16-count)",
+      "price": 1.5,
+      "slot": null,
+      "elo": 1471,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 27,
+      "name": "Red Bull (8.4 oz slim can)",
+      "price": 2.5,
+      "slot": null,
+      "elo": 1485,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 5,
+      "name": "SunChips (Harvest Cheddar)",
+      "price": 1.5,
+      "slot": null,
+      "elo": 1484,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 2,
+      "name": "Doritos (Cool Ranch)",
+      "price": 1.5,
+      "slot": null,
+      "elo": 1483,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 3,
+      "name": "Cheetos (Crunchy)",
+      "price": 1.5,
+      "slot": null,
+      "elo": 1474,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 25,
+      "name": "Orbit Spearmint Gum (8-pack)",
+      "price": 1.0,
+      "slot": null,
+      "elo": 1470,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 16,
+      "name": "Lay\u2019s Barbecue Potato Chips",
+      "price": 1.5,
+      "slot": null,
+      "elo": 1470,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 23,
+      "name": "Hershey\u2019s Milk Chocolate",
+      "price": 1.25,
+      "slot": null,
+      "elo": 1469,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 6,
+      "name": "SunChips (Garden Salsa)",
+      "price": 1.5,
+      "slot": null,
+      "elo": 1468,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 4,
+      "name": "Lay\u2019s Classic Potato Chips",
+      "price": 1.5,
+      "slot": null,
+      "elo": 1468,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 10,
+      "name": "Chips Ahoy! Mini Cookies",
+      "price": 1.25,
+      "slot": null,
+      "elo": 1468,
+      "sold": 0,
+      "image": "images/default.png"
+    },
+    {
+      "id": 31,
+      "name": "Contestant G1",
+      "price": 0.0,
+      "slot": null,
+      "elo": 1500,
+      "sold": 0,
+      "image": "images/G1.png"
+    },
+    {
+      "id": 32,
+      "name": "Contestant G2",
+      "price": 0.0,
+      "slot": null,
+      "elo": 1500,
+      "sold": 0,
+      "image": "images/G2.png"
+    },
+    {
+      "id": 33,
+      "name": "Contestant G3",
+      "price": 0.0,
+      "slot": null,
+      "elo": 1500,
+      "sold": 0,
+      "image": "images/G3.png"
+    },
+    {
+      "id": 34,
+      "name": "Contestant G4",
+      "price": 0.0,
+      "slot": null,
+      "elo": 1500,
+      "sold": 0,
+      "image": "images/G4.png"
+    }
+  ],
+  "apps": []
+}
